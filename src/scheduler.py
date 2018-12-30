@@ -1,11 +1,21 @@
 import json
 
 import src.auth as auth
+from src.utils import TSID, STATUS, MESSAGE, SUCCESS, SUCCESS_CODE, ERROR_CODE
 
-def get_all(client, request):
-    if not auth.verify(request):
-        return json.dumps({'status': 400, 'message': 'Not authenticated'})
+NOT_AUTHENTICATED = 'Not authenticated'
+ALREADY_REGISTERED = 'User already registered for timeslot'
 
+def check_auth(func):
+    def wrapper(client, request, *args, **kwargs):
+        status, uid = auth.verify(request)
+        if not status:
+            return json.dumps({STATUS: ERROR_CODE, MESSAGE: NOT_AUTHENTICATED})
+        return func(client, request, uid, *args, **kwargs)
+    return wrapper
+
+@check_auth
+def get_all(client, request, uid=None):
     resp_data = {}
     db_data = client.get_all_timeslots()
     for slot in db_data:
@@ -14,4 +24,14 @@ def get_all(client, request):
             resp_data[position] = []
         resp_data[position].append(slot.construct_response())
 
-    return json.dumps({'status': 200, 'message': 'Success', 'data': resp_data})
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS, 'data': resp_data})
+
+@check_auth
+def add_timeslot(client, request, uid=None):
+    tsid = request.form[TSID]
+
+    if client.user_timeslot_pair_exists(uid, tsid):
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: ALREADY_REGISTERED})
+
+    client.add_timeslot_to_user(uid, tsid)
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})

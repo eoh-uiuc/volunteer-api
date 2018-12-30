@@ -10,6 +10,12 @@ class User:
         self.society = society
         self.timeslots = timeslots
 
+    def add_timeslot(self, tsid):
+        self.timeslots.append(tsid)
+
+    def remove_timeslot(self, tsid):
+        self.timeslots.remove(tsid)
+
     def construct_document(self):
         return {'uid': self.uid, 'pass_hash': self.pass_hash, 'name': self.name,
                 'phone': self.phone, 'society': self.society, 'timeslots': self.timeslots}

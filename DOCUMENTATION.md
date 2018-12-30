@@ -1,6 +1,6 @@
 ## Authentication
 
-### Registration (POST)
+### Registration (/register/ POST)
 
 Request Body
 
@@ -24,7 +24,7 @@ Response Body
 }
 ```
 
-#### Login (POST)
+#### Login (/login/ POST)
 
 Request Body
 
@@ -45,7 +45,7 @@ Response Body
 }
 ```
 
-#### Admin Add/Mod Timeslot (POST)
+#### Admin Add/Mod Timeslot (/admin_add_timeslot/ /admin_mod_timeslot/ POST)
 
 Request Body
 
@@ -69,7 +69,7 @@ Response Body
 }
 ```
 
-#### Admin Remove Timeslot (POST)
+#### Admin Remove Timeslot (/admin_del_timeslot/ POST)
 
 Request Body
 
@@ -89,7 +89,7 @@ Response Body
 }
 ```
 
-#### Add/Remove Position (POST)
+#### Add/Remove Position (/admin_add_position/ /admin_del_position/ POST)
 
 Removing a position will also remove all time slots associated with that position
 
@@ -111,7 +111,7 @@ Response Body
 }
 ```
 
-#### Get All Timeslots (GET)
+#### Get All Timeslots (/get_all_timeslots/ GET)
 
 Request Body
 
@@ -141,5 +141,25 @@ Response Body
         ],
         ...
     }
+}
+```
+
+#### Add timeslot (/add_timeslot/ POST)
+
+Request Body
+
+```
+{
+    'auth_token': string,
+    'tsid': string
+}
+```
+
+Response Body
+
+```
+{
+    'status': int,
+    'message': string
 }
 ```

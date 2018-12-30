@@ -49,3 +49,8 @@ def admin_del_pos():
 @app.route('/get_all_timeslots/', methods=['GET'])
 def get_all():
     return scheduler.get_all(client, request)
+
+@app.route('/add_timeslot/', methods=['POST'])
+def add_timeslot():
+    return scheduler.add_timeslot(client, request)
+    

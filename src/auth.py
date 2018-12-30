@@ -1,57 +1,56 @@
 import json
 import os
 
-import key
 from models.user import User
+from src.utils import SECRET, ADMIN, UID, PASS_HASH, AUTH_TOKEN, STATUS, MESSAGE, SUCCESS, SUCCESS_CODE, ERROR_CODE
 
-SECRET = 'SECRET'
-UID = 'uid'
-PASS_HASH = 'pass_hash'
-AUTH_TOKEN = 'auth_token'
+INCORRECT_PASSWORD = 'Incorrect Password'
+NONEXISTENT_USER = 'User does not exists'
+DUPLICATE_USER = 'User already exists'
 
 def verify_admin(request):
     auth_token = request.form[AUTH_TOKEN]
-    status, uid = User.decode_auth_token(auth_token, os.getenv('SECRET'))
+    status, uid = User.decode_auth_token(auth_token, os.getenv(SECRET))
 
-    return status and uid == key.ADMIN
+    return status and uid == os.getenv(ADMIN)
 
 def verify(request):
     auth_token = request.form[AUTH_TOKEN]
-    status, uid = User.decode_auth_token(auth_token, os.getenv('SECRET'))
+    status, uid = User.decode_auth_token(auth_token, os.getenv(SECRET))
 
-    return status
+    return status, uid
 
 def register(db_client, request):
     uid = request.form[UID]
     if db_client.user_exists(uid):
-        return json.dumps({'status': 400, 'message': 'User already exists', 'auth_token': ''})
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: DUPLICATE_USER, AUTH_TOKEN: ''})
     
     user_data = {i: j for i, j in request.form.items()}
     new_user = User(**user_data)
     db_client.add_user(new_user)
-    auth_token = new_user.encode_auth_token(os.getenv('SECRET'))
-    return json.dumps({'status': 200, 'message': 'Success', 'auth_token': auth_token.decode()})
+    auth_token = new_user.encode_auth_token(os.getenv(SECRET))
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS, AUTH_TOKEN: auth_token.decode()})
 
 def login(db_client, request):
     uid = request.form[UID]
     if not db_client.user_exists(uid):
-        return json.dumps({'status': 400, 'message': 'User does not exists', 'auth_token': ''})
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: NONEXISTENT_USER, AUTH_TOKEN: ''})
 
     user = db_client.get_user(uid)
     if request.form[PASS_HASH] != user.pass_hash:
-        return json.dumps({'status': 400, 'message': 'Incorrect Password', 'auth_token': ''})
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: INCORRECT_PASSWORD, AUTH_TOKEN: ''})
 
-    auth_token = user.encode_auth_token(os.getenv('SECRET'))
-    return json.dumps({'status': 200, 'message': 'Success', 'auth_token': auth_token.decode()})
+    auth_token = user.encode_auth_token(os.getenv(SECRET))
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS, AUTH_TOKEN: auth_token.decode()})
 
 def delete(db_client, request):
     uid = request.form[UID]
     if not db_client.user_exists(uid):
-        return json.dumps({'status': 400, 'message': 'User does not exists'})
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: NONEXISTENT_USER})
 
     user = db_client.get_user(uid)
     if request.form[PASS_HASH] != user.pass_hash:
-        return json.dumps({'status': 400, 'message': 'Incorrect Password'})
+        return json.dumps({STATUS: ERROR_CODE, MESSAGE: INCORRECT_PASSWORD})
 
     db_client.remove_user(uid)
-    return json.dumps({'status': 200, 'message': 'Success'})
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})
