@@ -14,8 +14,11 @@ class SchedulerTestCase(unittest.TestCase):
 
     def post_timeslot_to_user(self, auth, tsid):
         req = {'auth_token': auth, 'tsid': tsid}
-        res = self.client.post('/add_timeslot/', data=req)
-        return json.loads(res.data.decode())
+        return utils.post(self.client, '/add_timeslot/', req)
+
+    def get_user_timeslots(self, auth):
+        req = {'auth_token': auth}
+        return utils.get(self.client, '/get_timeslots/', req)
 
     def test_get_timeslots_empty(self):
         req = {'auth_token': self.admin_auth}
@@ -72,6 +75,27 @@ class SchedulerTestCase(unittest.TestCase):
 
         res = utils.del_timeslot(self.client, self.admin_auth, tsid)
         self.assertFalse(tsid in self.db_client.get_user(uid).timeslots)
+        self.db_client.remove_user(uid)
+
+    def test_get_registered_timeslots(self):
+        uid = 'bmw4'
+        utils.post_registration(self.client, uid)
+        data = utils.post_login(self.client, uid, 'asdf')
+        auth_token = data['auth_token']
+
+        timeslots = self.get_user_timeslots(auth_token)
+        self.assertEqual(len(timeslots['data']), 0)
+
+        tsid = 'safety_12'
+        utils.post_position(self.client, self.admin_auth, 'safety')
+        utils.post_timeslot(self.client, self.admin_auth, tsid, 'safety', '01/01/2019 12:00A', 2, 5)
+
+        res = self.post_timeslot_to_user(auth_token, tsid)
+        self.assertEqual(res['status'], 200)
+
+        timeslots = self.get_user_timeslots(auth_token)
+        self.assertEqual(len(timeslots['data']), 1)
+        self.assertEqual(timeslots['data']['safety'][0]['tsid'], tsid)
         self.db_client.remove_user(uid)
 
     def tearDown(self):

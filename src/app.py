@@ -54,3 +54,6 @@ def get_all():
 def add_timeslot():
     return scheduler.add_timeslot(client, request)
     
+@app.route('/get_timeslots/', methods=['GET'])
+def get_timeslots():
+    return scheduler.get_registered_timeslots(client, request)

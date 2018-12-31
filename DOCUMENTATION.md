@@ -1,6 +1,6 @@
 ## Authentication
 
-### Registration (/register/ POST)
+#### Registration (/register/ POST)
 
 Request Body
 
@@ -163,3 +163,5 @@ Response Body
     'message': string
 }
 ```
+
+#### Get registered timeslots (/get_timeslots/ GET)

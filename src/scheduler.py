@@ -14,16 +14,21 @@ def check_auth(func):
         return func(client, request, uid, *args, **kwargs)
     return wrapper
 
-@check_auth
-def get_all(client, request, uid=None):
+def generate_timeslot_list(timeslots):
     resp_data = {}
-    db_data = client.get_all_timeslots()
-    for slot in db_data:
+    for slot in timeslots:
         position = slot.position
         if position not in resp_data:
             resp_data[position] = []
         resp_data[position].append(slot.construct_response())
 
+    return resp_data
+
+@check_auth
+def get_all(client, request, uid=None):
+    db_data = client.get_all_timeslots()
+
+    resp_data = generate_timeslot_list(db_data)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS, 'data': resp_data})
 
 @check_auth
@@ -35,3 +40,10 @@ def add_timeslot(client, request, uid=None):
 
     client.add_timeslot_to_user(uid, tsid)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})
+
+@check_auth
+def get_registered_timeslots(client, request, uid=None):
+    timeslots = client.get_user_timeslots(uid)
+
+    resp_data = generate_timeslot_list(timeslots)
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS, 'data': resp_data})

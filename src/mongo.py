@@ -73,7 +73,7 @@ class DBClient:
         self.get_timeslot_position_posts().delete_one({POS: position})
         timeslots_to_delete = self.get_timeslot_posts().find({POS: position})
         for timeslot in timeslots_to_delete:
-            self.remove_timeslot(timeslot['tsid'])
+            self.remove_timeslot(timeslot[TSID])
 
     def timeslot_exists(self, tsid):
         return self.get_timeslot_posts().count_documents({TSID: tsid}) != 0
@@ -122,3 +122,7 @@ class DBClient:
         timeslot = self.get_timeslot(tsid)
         timeslot.add_user(uid)
         self.update_timeslot(tsid, timeslot)
+
+    def get_user_timeslots(self, uid):
+        user = self.get_user(uid)
+        return [self.get_timeslot(tsid) for tsid in user.timeslots]
