@@ -42,7 +42,7 @@ class DBClient:
         '''
         self.get_user_posts().update_one({UID: uid}, {'$set': user.construct_document()})
 
-    def remove_user(self, uid):
+    def delete_user(self, uid):
         '''
         Removes user from database and removes it from its registered timeslots
         '''
@@ -69,11 +69,11 @@ class DBClient:
     def timeslot_position_exists(self, position):
         return self.get_timeslot_position_posts().count_documents({POS: position}) != 0
 
-    def remove_timeslot_position(self, position):
+    def delete_timeslot_position(self, position):
         self.get_timeslot_position_posts().delete_one({POS: position})
         timeslots_to_delete = self.get_timeslot_posts().find({POS: position})
         for timeslot in timeslots_to_delete:
-            self.remove_timeslot(timeslot[TSID])
+            self.delete_timeslot(timeslot[TSID])
 
     def timeslot_exists(self, tsid):
         return self.get_timeslot_posts().count_documents({TSID: tsid}) != 0
@@ -95,7 +95,7 @@ class DBClient:
     def update_timeslot(self, tsid, timeslot):
         self.get_timeslot_posts().update_one({TSID: tsid}, {'$set': timeslot.construct_document()})
 
-    def remove_timeslot(self, tsid):
+    def delete_timeslot(self, tsid):
         '''
         Removes timeslot from database and removes itself from its registered users
         Assumes user exists
@@ -127,3 +127,15 @@ class DBClient:
     def get_user_timeslots(self, uid):
         user = self.get_user(uid)
         return [self.get_timeslot(tsid) for tsid in user.timeslots]
+
+    def remove_timeslot_from_user(self, uid, tsid):
+        '''
+        Assumes uid and tsid exist, and that uid has previously registered for tsid
+        '''
+        user = self.get_user(uid)
+        user.remove_timeslot(tsid)
+        self.update_user(uid, user)
+
+        timeslot = self.get_timeslot(tsid)
+        timeslot.remove_user(uid)
+        self.update_timeslot(tsid, timeslot)

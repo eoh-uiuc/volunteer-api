@@ -57,3 +57,7 @@ def add_timeslot():
 @app.route('/get_timeslots/', methods=['GET'])
 def get_timeslots():
     return scheduler.get_registered_timeslots(client, request)
+
+@app.route('/del_timeslot/', methods=['POST'])
+def del_timeslot():
+    return scheduler.remove_timeslot(client, request)

@@ -21,3 +21,13 @@ ERROR_CODE = 400
 def parse_timeslot(request):
     slot_data = {i: j for i, j in request.form.items()}
     return Timeslot(**slot_data)
+
+def generate_timeslot_list(timeslots):
+    resp_data = {}
+    for slot in timeslots:
+        position = slot.position
+        if position not in resp_data:
+            resp_data[position] = []
+        resp_data[position].append(slot.construct_response())
+
+    return resp_data

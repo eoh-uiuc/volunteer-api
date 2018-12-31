@@ -52,5 +52,5 @@ def delete(db_client, request):
     if request.form[PASS_HASH] != user.pass_hash:
         return json.dumps({STATUS: ERROR_CODE, MESSAGE: INCORRECT_PASSWORD})
 
-    db_client.remove_user(uid)
+    db_client.delete_user(uid)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})

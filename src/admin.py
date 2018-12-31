@@ -49,7 +49,7 @@ def admin_del(client, request):
     if not client.timeslot_exists(tsid):
         return json.dumps({STATUS: ERROR_CODE, MESSAGE: NONEXISTENT_TIMESLOT})
     
-    client.remove_timeslot(tsid)
+    client.delete_timeslot(tsid)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})
 
 @check_admin
@@ -69,5 +69,5 @@ def admin_del_pos(client, request):
     if not client.timeslot_position_exists(new_position):
         return json.dumps({STATUS: ERROR_CODE, MESSAGE: INVALID_POSITION})
     
-    client.remove_timeslot_position(new_position)
+    client.delete_timeslot_position(new_position)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})

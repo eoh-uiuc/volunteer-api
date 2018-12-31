@@ -21,13 +21,13 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(data['status'], 200)
         self.assertTrue(self.db_client.user_exists(uid))
 
-        self.db_client.remove_user(uid)
+        self.db_client.delete_user(uid)
         self.assertFalse(self.db_client.user_exists(uid))
 
     def test_failed_login_user(self):
         uid = 'bmw4'
         if self.db_client.user_exists(uid):
-            self.db_client.remove_user(uid)
+            self.db_client.delete_user(uid)
         data = utils.post_login(self.client, uid, 'asdf')
 
         self.assertEqual(data['status'], 400)
@@ -43,6 +43,5 @@ class AuthTestCase(unittest.TestCase):
         self.assertTrue(data['auth_token'] != '')
         self.assertTrue(user.User.decode_auth_token(data['auth_token'], self.secret)[0])
 
-        self.db_client.remove_user(uid)
+        self.db_client.delete_user(uid)
         self.assertFalse(self.db_client.user_exists(uid))
-
