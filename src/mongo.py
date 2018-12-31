@@ -98,6 +98,7 @@ class DBClient:
     def remove_timeslot(self, tsid):
         '''
         Removes timeslot from database and removes itself from its registered users
+        Assumes user exists
         '''
         timeslot = self.get_timeslot(tsid)
         uids = timeslot.registered

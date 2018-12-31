@@ -12,9 +12,9 @@ class SchedulerTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.admin_auth = utils.admin_login(self.client)
 
-        self.uid = 'bmw4'
-        utils.post_registration(self.client, uid)
-        data = utils.post_login(self.client, uid, 'asdf')
+        self.uid = 'test'
+        utils.post_registration(self.client, self.uid)
+        data = utils.post_login(self.client, self.uid, 'asdf')
         self.auth_token = data['auth_token']
 
     def post_timeslot_to_user(self, auth, tsid):
@@ -44,15 +44,20 @@ class SchedulerTestCase(unittest.TestCase):
         self.assertTrue(self.uid in self.db_client.get_timeslot(tsid).registered)
 
     def test_remove_user_also_removes_from_timeslots(self):
+        uid = 'test1'
+        utils.post_registration(self.client, uid)
+        data = utils.post_login(self.client, uid, 'asdf')
+        auth_token = data['auth_token']
+
         tsid = 'safety_12'
         utils.post_position(self.client, self.admin_auth, 'safety')
         utils.post_timeslot(self.client, self.admin_auth, tsid, 'safety', '01/01/2019 12:00A', 2, 5)
 
-        res = self.post_timeslot_to_user(self.auth_token, tsid)
+        res = self.post_timeslot_to_user(auth_token, tsid)
         self.assertEqual(res['status'], 200)
 
-        self.db_client.remove_user(self.uid)
-        self.assertFalse(self.uid in self.db_client.get_timeslot(tsid).registered)
+        self.db_client.remove_user(uid)
+        self.assertFalse(uid in self.db_client.get_timeslot(tsid).registered)
 
     def test_remove_timeslot_also_removes_from_users(self):
         tsid = 'safety_12'
@@ -81,8 +86,8 @@ class SchedulerTestCase(unittest.TestCase):
         self.assertEqual(timeslots['data']['safety'][0]['tsid'], tsid)
 
     def tearDown(self):
-        self.clear_db()
         self.db_client.remove_user(self.uid)
+        self.clear_db()
         
     def clear_db(self):
         self.db_client.get_timeslot_posts().delete_many({})
