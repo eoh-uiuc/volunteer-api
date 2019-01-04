@@ -7,7 +7,7 @@ Request Body
 ```
 {
     'uid': string,
-    'pass_hash': string,
+    'pwd': string,
     'name': string,
     'phone': string,
     'society': string
@@ -31,7 +31,7 @@ Request Body
 ```
 {
     'uid': string,
-    'pass_hash': string,
+    'pwd': string,
 }
 ```
 
@@ -99,8 +99,8 @@ Request Body
 
 ```
 {
-    'auth_token': string,
-    'position': string
+    'position': string,
+    'auth_token': string
 }
 ```
 

@@ -6,6 +6,7 @@ ADMIN = 'ADMIN'
 UID = 'uid'
 TSID = 'tsid'
 
+PWD = 'pwd'
 PASS_HASH = 'pass_hash'
 AUTH_TOKEN = 'auth_token'
 POSITION = 'position'

@@ -44,6 +44,7 @@ class DBClient:
 
     def delete_user(self, uid):
         '''
+        Assumes user exists
         Removes user from database and removes it from its registered timeslots
         '''
         user = self.get_user(uid)
@@ -85,6 +86,9 @@ class DBClient:
         self.get_timeslot_posts().insert_one(timeslot.construct_document())
 
     def get_timeslot(self, tsid):
+        '''
+        Returns None if timeslot does not exist
+        '''
         data = self.get_timeslot_posts().find_one({TSID: tsid})
         return None if data == None else Timeslot(**data)
 
@@ -98,7 +102,7 @@ class DBClient:
     def delete_timeslot(self, tsid):
         '''
         Removes timeslot from database and removes itself from its registered users
-        Assumes user exists
+        Assumes timeslot exists
         '''
         timeslot = self.get_timeslot(tsid)
         uids = timeslot.registered
