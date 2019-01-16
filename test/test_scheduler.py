@@ -21,25 +21,27 @@ class SchedulerTestCase(unittest.TestCase):
         self.create_position(self.tsid, 'safety')
 
     def add_timeslot_to_user(self, auth, tsid):
-        req = {'auth_token': auth, 'tsid': tsid}
-        return utils.post(self.client, '/add_timeslot/', req)
+        auth = {'Authorization': auth}
+        req = {'tsid': tsid}
+        return utils.post(self.client, '/add_timeslot/', req, auth)
 
     def get_user_timeslots(self, auth):
-        req = {'auth_token': auth}
-        return utils.get(self.client, '/get_timeslots/', req)
+        auth = {'Authorization': auth}
+        return utils.get(self.client, '/get_timeslots/', {}, auth)
 
     def remove_timeslot_from_user(self, auth, tsid):
-        req = {'auth_token': auth, 'tsid': tsid}
-        return utils.post(self.client, '/del_timeslot/', req)
+        auth = {'Authorization': auth}
+        req = {'tsid': tsid}
+        return utils.post(self.client, '/del_timeslot/', req, auth)
 
     def create_position(self, tsid, position):
         utils.post_position(self.client, self.admin_auth, position)
         utils.post_timeslot(self.client, self.admin_auth, tsid, position, '01/01/2019 12:00A', 2, 5)
 
     def test_get_timeslots_empty(self):
-        req = {'auth_token': self.admin_auth}
+        auth = {'Authorization': self.admin_auth}
 
-        res = self.client.get('/get_all_timeslots/', data=req)
+        res = self.client.get('/get_all_timeslots/', headers=auth)
         res = json.loads(res.data.decode())
         self.assertEqual(res['status'], 200)
 

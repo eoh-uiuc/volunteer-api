@@ -3,20 +3,20 @@ import os
 import hashlib
 
 from models.user import User
-from src.utils import SECRET, ADMIN, UID, PWD, PASS_HASH, AUTH_TOKEN, STATUS, MESSAGE, SUCCESS, SUCCESS_CODE, ERROR_CODE
+from src.utils import SECRET, ADMIN, UID, AUTHORIZATION, PWD, PASS_HASH, AUTH_TOKEN, STATUS, MESSAGE, SUCCESS, SUCCESS_CODE, ERROR_CODE
 
 INCORRECT_PASSWORD = 'Incorrect Password'
 NONEXISTENT_USER = 'User does not exist'
 DUPLICATE_USER = 'User already exists'
 
 def verify_admin(request):
-    auth_token = request.form[AUTH_TOKEN]
+    auth_token = request.headers.get(AUTHORIZATION)
     status, uid = User.decode_auth_token(auth_token, os.getenv(SECRET))
 
     return status and uid == os.getenv(ADMIN)
 
 def verify(request):
-    auth_token = request.form[AUTH_TOKEN]
+    auth_token = request.headers.get(AUTHORIZATION)
     status, uid = User.decode_auth_token(auth_token, os.getenv(SECRET))
 
     return status, uid
