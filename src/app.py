@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 import src.auth as auth
 import src.admin as admin
 import src.scheduler as scheduler
+import src.hour_logger as hour_logger
 from src.mongo import DBClient
 
 from models.user import User
@@ -72,3 +73,18 @@ def get_timeslots():
 @cross_origin()
 def del_timeslot():
     return scheduler.remove_timeslot(client, request)
+
+@app.route('/checkin/', methods=['POST'])
+@cross_origin()
+def checkin():
+    return hour_logger.checkin(client, request)
+
+@app.route('/checkout/', methods=['POST'])
+@cross_origin()
+def checkout():
+    return hour_logger.checkout(client, request)
+
+@app.route('/get_logged_hours/', methods=['GET'])
+@cross_origin()
+def get_logged_hours():
+    return hour_logger.get_hours(client, request)

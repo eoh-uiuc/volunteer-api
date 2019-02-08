@@ -12,6 +12,8 @@ PASS_HASH = 'pass_hash'
 AUTH_TOKEN = 'auth_token'
 POSITION = 'position'
 
+TIME = 'time'
+
 STATUS = 'status'
 MESSAGE = 'message'
 
