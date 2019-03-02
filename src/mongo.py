@@ -2,12 +2,14 @@ from pymongo import MongoClient
 
 from models.user import User
 from models.timeslot import Timeslot
+from models.hours import Hours
 
 UID = 'uid'
 TSID = 'tsid'
 POSITIONS = 'positions'
 POS = 'position'
 SLOTS = 'slots'
+HOURS = 'hours'
 
 class DBClient:
     def __init__(self, host='localhost', port=27017):
@@ -143,3 +145,27 @@ class DBClient:
         timeslot = self.get_timeslot(tsid)
         timeslot.remove_user(uid)
         self.update_timeslot(tsid, timeslot)
+
+    def get_hours_posts(self):
+        return self.client.hours_db[SLOTS]
+
+    def get_hours(self, uid):
+        data = self.get_hours_posts().find_one({UID: uid})
+        return Hours(uid) if data == None else Hours(**data)
+
+    def is_checked_in(self, uid):
+        hours = self.get_hours(uid)
+        return hours.checked_in()
+
+    def update_hours(self, uid, hours):
+        self.get_hours_posts().update_one({UID: uid}, {'$set': hours.construct_document()})
+
+    def checkin(self, uid, time):
+        hours = self.get_hours(uid)
+        hours.checkin(time)
+        self.update_hours(uid, hours)
+
+    def checkout(self, uid, time):
+        hours = self.get_hours(uid)
+        hours.checkout(time)
+        self.update_hours(uid, hours)
