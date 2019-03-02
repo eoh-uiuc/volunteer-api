@@ -1,4 +1,4 @@
-from src.app import app
+from src.app import application
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    application.run(debug=True, threaded=True)

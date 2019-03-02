@@ -12,7 +12,7 @@ def check_auth(func):
     def wrapper(client, request, *args, **kwargs):
         status, uid = auth.verify(request)
         if not status:
-            return json.dumps({STATUS: ERROR_CODE, MESSAGE: NOT_AUTHENTICATED})
+            return json.dumps({STATUS: ERROR_CODE, MESSAGE: NOT_AUTHENTICATED, 'details': uid})
         return func(client, request, uid, *args, **kwargs)
     return wrapper
 

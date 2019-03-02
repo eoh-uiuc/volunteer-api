@@ -1,3 +1,0 @@
-export SECRET='aKl`vqKa\x07\xe2\xc0\x12\xc6\xc5\x9d31\x11\x97\xd2\x8d\x97C\x8f'
-export ADMIN='admin'
-export ADMIN_PASS='admin'
