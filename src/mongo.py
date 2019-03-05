@@ -158,7 +158,7 @@ class DBClient:
         return hours.checked_in()
 
     def update_hours(self, uid, hours):
-        self.get_hours_posts().update_one({UID: uid}, {'$set': hours.construct_document()})
+        self.get_hours_posts().update_one({UID: uid}, {'$set': hours.construct_document()}, upsert=True)
 
     def checkin(self, uid, time):
         hours = self.get_hours(uid)

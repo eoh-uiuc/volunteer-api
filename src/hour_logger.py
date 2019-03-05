@@ -14,7 +14,7 @@ def checkin(client, request):
 
     if client.is_checked_in(uid):
         return json.dumps({STATUS: ERROR_CODE, MESSAGE: ALREADY_CHECKED_IN})
-        
+
     time = request.form[TIME]
     client.checkin(uid, time)
 
