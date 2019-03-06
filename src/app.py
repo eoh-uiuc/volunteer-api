@@ -70,7 +70,12 @@ def get_all():
 @cross_origin()
 def add_timeslot():
     return scheduler.add_timeslot(client, request)
-    
+
+@application.route('/get_timeslot_details/', methods=['GET'])
+@cross_origin()
+def get_timeslot_details():
+    return scheduler.get_timeslot_details(client, request)
+
 @application.route('/get_timeslots/', methods=['GET'])
 @cross_origin()
 def get_timeslots():

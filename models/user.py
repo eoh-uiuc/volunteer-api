@@ -19,6 +19,9 @@ class User:
     def construct_document(self):
         return {'uid': self.uid, 'pass_hash': self.pass_hash, 'name': self.name,
                 'phone': self.phone, 'society': self.society, 'timeslots': self.timeslots}
+    
+    def basic_info(self):
+        return {'uid': self.uid, 'name': self.name, 'phone': self.phone, 'society': self.society} 
 
     def encode_auth_token(self, secret):
         """

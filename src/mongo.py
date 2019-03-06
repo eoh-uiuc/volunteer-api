@@ -145,7 +145,7 @@ class DBClient:
         timeslot = self.get_timeslot(tsid)
         timeslot.remove_user(uid)
         self.update_timeslot(tsid, timeslot)
-
+    
     def get_hours_posts(self):
         return self.client.hours_db[SLOTS]
 

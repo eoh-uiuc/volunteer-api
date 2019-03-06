@@ -49,3 +49,17 @@ def remove_timeslot(client, request, uid=None):
 
     client.remove_timeslot_from_user(uid, tsid)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})
+
+@check_auth
+def get_timeslot_details(client, request, uid=None):
+    tsid = request.args[TSID]
+
+    details = client.get_timeslot(tsid).construct_document()
+    registered = details['registered']
+    res = []
+    for r in registered:
+        res.append(client.get_user(r).basic_info())
+    
+    details['registered'] = res
+
+    return json.dumps({STATUS: SUCCESS_CODE, 'data': details})
