@@ -58,7 +58,9 @@ def get_timeslot_details(client, request, uid=None):
     registered = details['registered']
     res = []
     for r in registered:
-        res.append(client.get_user(r).basic_info())
+        info = client.get_user(r).basic_info()
+        info['checkedin'] = client.is_checked_in(r)
+        res.append(info)
     
     details['registered'] = res
 
