@@ -61,6 +61,11 @@ def admin_add_pos():
 def admin_del_pos():
     return admin.admin_del_pos(client, request)
 
+
+@application.route('/reset_password/', methods=['POST'])
+def admin_reset_password():
+    return admin.admin_reset_password(client, request)
+
 @application.route('/get_all_timeslots/', methods=['GET'])
 @cross_origin()
 def get_all():

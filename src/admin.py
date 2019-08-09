@@ -2,7 +2,7 @@ import json
 
 import src.auth as auth
 import src.utils as utils
-from src.utils import TSID, STATUS, MESSAGE, POSITION, SUCCESS, SUCCESS_CODE, ERROR_CODE
+from src.utils import UID, TSID, STATUS, MESSAGE, POSITION, SUCCESS, SUCCESS_CODE, ERROR_CODE
 
 ADMIN_REQUIRED = 'Admin privileges required'
 NONEXISTENT_TIMESLOT = 'Timeslot does not exists'
@@ -70,4 +70,13 @@ def admin_del_pos(client, request):
         return json.dumps({STATUS: ERROR_CODE, MESSAGE: INVALID_POSITION})
     
     client.delete_timeslot_position(new_position)
+    return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})
+
+@check_admin
+def admin_reset_password(client, request):
+    uid = request.form[UID]
+    password = request.form['password']
+
+    hashed = auth.hash_pass(password)
+    client.update_password(uid, hashed)
     return json.dumps({STATUS: SUCCESS_CODE, MESSAGE: SUCCESS})

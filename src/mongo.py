@@ -43,6 +43,9 @@ class DBClient:
         Assumes user exists
         '''
         self.get_user_posts().update_one({UID: uid}, {'$set': user.construct_document()})
+    
+    def update_password(self, uid, password):
+        self.client.users_db['users'].update_one({UID: uid}, { '$set': { 'pass_hash': password }})
 
     def delete_user(self, uid):
         '''
